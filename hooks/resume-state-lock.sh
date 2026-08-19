@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cat <<'MESSAGE'
+MANDATORY POST-COMPACTION LOCK: First invoke $resume-state-lock:resume-state-lock immediately. Do not infer unavailability merely because skill is absent from catalog: make concrete invocation or load attempt first. Only if attempt fails, report exact blocker and stop. Treat compacted summary only as vague leftover. Perform no resumed task execution or mutation. Read all applicable rule files in full, recursively. For each named or required skill, invoke and read internal SKILL.md when available; report unavailable skills only when rules make them mandatory. Then end turn awaiting explicit user confirmation.
+MESSAGE

@@ -1,0 +1,24 @@
+{
+  "name": "resume-state-lock",
+  "version": "0.1.0+codex.20260817143246",
+  "description": "Reinitializes root Codex sessions safely after context compaction.",
+  "homepage": "https://github.com/silveroxides/resume-state-lock",
+  "repository": "https://github.com/silveroxides/resume-state-lock",
+  "license": "MIT",
+  "author": {
+    "name": "silveroxides",
+    "url": "https://github.com/silveroxides"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Resume State Lock",
+    "shortDescription": "Reinitialize safely after compaction.",
+    "longDescription": "Applies a compact-scoped execution lock that reloads applicable rules before awaiting confirmation.",
+    "developerName": "silveroxides",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Reinitialize after context compaction and wait for confirmation."
+    ]
+  }
+}

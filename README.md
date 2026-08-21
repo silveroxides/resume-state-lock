@@ -7,6 +7,10 @@ Repository: https://github.com/silveroxides/resume-state-lock
 The SessionStart hook reloads applicable instructions, checks required skills,
 and stops until the user confirms continuation.
 
+Filesystem-backed skills load directly from the exact `SKILL.md` locator in the
+skill catalog. The lock forbids tool discovery, `ALL_TOOLS` inspection, MCP
+capability queries, and general catalog enumeration during that load.
+
 ## Install
 
 ```text

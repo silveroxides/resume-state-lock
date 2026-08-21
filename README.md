@@ -9,10 +9,9 @@ and stops until the user confirms continuation.
 
 ## Install
 
-Copy this query into Codex:
-
 ```text
-Install the plugin from https://github.com/silveroxides/resume-state-lock
+codex plugin marketplace add silveroxides/resume-state-lock --ref main
+codex plugin add resume-state-lock@resume-state-lock
 ```
 
 After installation, start a new Codex thread so the plugin and skill catalog

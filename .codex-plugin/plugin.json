@@ -1,6 +1,6 @@
 {
   "name": "resume-state-lock",
-  "version": "0.1.0+codex.20260821011541",
+  "version": "0.1.0+codex.20260821012534",
   "description": "Reinitializes root Codex sessions safely after context compaction.",
   "homepage": "https://github.com/silveroxides/resume-state-lock",
   "repository": "https://github.com/silveroxides/resume-state-lock",

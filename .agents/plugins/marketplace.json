@@ -1,0 +1,20 @@
+{
+  "name": "resume-state-lock",
+  "interface": {
+    "displayName": "Resume State Lock"
+  },
+  "plugins": [
+    {
+      "name": "resume-state-lock",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -74,6 +74,49 @@ class LockContractTests(unittest.TestCase):
                 missing = subprocess.check_output(command, text=True, timeout=15, **kwargs)
                 self.assertFalse(json.loads(missing)["continue"])
 
+    @unittest.skipUnless(shutil.which("powershell.exe"), "Windows PowerShell required")
+    def test_powershell_commands_survive_json_transport_and_literal_diagnostics(self):
+        executable = shutil.which("powershell.exe")
+        with tempfile.TemporaryDirectory() as temporary:
+            plugin = pathlib.Path(temporary) / "cache [x];(literal)$HOME`tick&+20260905'quoted'"
+            hooks = plugin / "hooks"
+            hooks.mkdir(parents=True)
+            installed = hooks / HOOKS[0].name
+            shutil.copyfile(HOOKS[0], installed)
+            skill = plugin / "skills" / "resume-state-lock" / "SKILL.md"
+            skill.parent.mkdir(parents=True)
+            skill.write_text('# Transport fixture\n$HOME [literal]\n"field": ["literal"]\n', encoding="utf-8")
+            output = subprocess.check_output(
+                [executable, "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", str(installed)],
+                text=True, timeout=15)
+            for prefix in ("PowerShell load command: ", "PowerShell path diagnostic command: "):
+                command = next(line.removeprefix(prefix) for line in output.splitlines() if line.startswith(prefix))
+                # The shell tool receives the decoded string, not JSON source escapes.
+                transported = json.loads(json.dumps({"cmd": command}))["cmd"]
+                self.assertEqual(transported, command)
+                result = subprocess.check_output(
+                    [executable, "-NoProfile", "-NonInteractive", "-Command", transported],
+                    text=True, timeout=15)
+                if prefix == "PowerShell load command: ":
+                    self.assertIn("# Transport fixture", result)
+                else:
+                    diagnostic = json.loads(result)
+                    self.assertEqual(diagnostic["FullName"], str(skill))
+                    self.assertFalse(diagnostic["PSIsContainer"])
+            quoted_path = str(skill).replace("'", "''")
+            command = "rg -n -- '^\\$HOME\\s+\\[literal\\]\\r?$' '" + quoted_path + "'"
+            result = subprocess.check_output(
+                [executable, "-NoProfile", "-NonInteractive", "-Command",
+                 json.loads(json.dumps({"cmd": command}))["cmd"]], text=True, timeout=15)
+            self.assertIn("2:$HOME [literal]", result)
+            command = r"rg -n -- '^\x22field\x22:\s*\[\x22literal\x22\]\r?$' '" + quoted_path + "'"
+            result = subprocess.check_output(
+                [executable, "-NoProfile", "-NonInteractive", "-Command", command], text=True, timeout=15)
+            self.assertIn('3:"field": ["literal"]', result)
+            self.assertIn("A malformed command is not evidence that the skill is absent", output)
+            self.assertIn("JSON escapes are not PowerShell escapes", output)
+            self.assertIn("use single-quoted regex patterns by default", output)
+
     def test_skill_repeats_invocation_semantics(self):
         text = (ROOT / "skills" / "resume-state-lock" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("invocation means reading the exact `SKILL.md` locator", text)
